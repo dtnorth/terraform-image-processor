@@ -16,6 +16,9 @@ This project is a **full-stack image management platform** deployed on AWS. It a
 - **Security:** IAM roles for access control & API Gateway securing API requests efficiently  
 - **Monitoring:** AWS CloudWatch for logs & performance tracking with basic monitoring to reduce logging costs  
 - **Pull Request Authorization:** All Git pushes require approval via pull requests before merging to the main branch  
+- **Terraform Security Scanning:** Uses **tfsec** for static analysis security scanning of Terraform code in GitHub Actions  
+- **Cost Estimation:** Uses **Infracost** to estimate and track AWS infrastructure costs in GitHub Actions  
+- **CloudFront Cache Invalidation:** AWS Lambda function to automatically clear the CloudFront cache for changed files only  
 
 ---
 
@@ -50,6 +53,7 @@ This project is a **full-stack image management platform** deployed on AWS. It a
 - The Next.js application is **statically exported** and stored in **S3**.
 - CloudFront serves the site globally with **HTTPS & caching**, reducing bandwidth costs.
 - **S3 Lifecycle policies** ensure old, unused assets are deleted automatically.
+- **Lambda Function clears only changed files from the CloudFront cache**, reducing unnecessary cache invalidations.
 
 ### **Backend (Lambda + API Gateway + S3 + DynamoDB)**
 - API Gateway processes **image upload requests**, using caching to reduce request costs.
@@ -58,10 +62,13 @@ This project is a **full-stack image management platform** deployed on AWS. It a
 - **DynamoDB is set to on-demand mode**, reducing costs by avoiding unnecessary provisioned throughput.
 - **Lambda scales automatically** to accommodate sudden spikes in image uploads without manual intervention.
 
-### **CI/CD (GitHub Actions + Terraform)**
+### **CI/CD (GitHub Actions + Terraform + tfsec + Infracost + CloudFront Cache Invalidation)**
 - GitHub Actions automates **Terraform infrastructure deployment** without running persistent infrastructure.
 - Any new code push triggers **automatic backend & frontend deployment**, reducing manual effort and costs.
 - **Pull request authorization is enforced**, ensuring all changes undergo review before merging into production.
+- **tfsec is integrated** into GitHub Actions to scan Terraform code for security vulnerabilities before deployment.
+- **Infracost is integrated** to provide cost estimation before deploying Terraform changes.
+- **AWS Lambda function detects changed files and invalidates only those files in CloudFront**, preventing full cache invalidation.
 
 ---
 
@@ -75,6 +82,8 @@ This project is a **full-stack image management platform** deployed on AWS. It a
 ### **2️⃣ Deploy Infrastructure with Terraform**
 ```sh
 cd terraform
+tfsec .  # Run tfsec security checks
+infracost breakdown --path .  # Run cost estimation
 terraform init
 terraform apply -auto-approve
 ```
@@ -93,6 +102,7 @@ Once the pull request is approved and merged to `main`, GitHub Actions will **au
 ```sh
 git push origin main
 ```
+- After deployment, the **AWS Lambda function will detect changed files and clear only those files from CloudFront cache**.
 
 ### **5️⃣ Access Your Deployed App**
 Run:
@@ -107,17 +117,6 @@ Backend API: https://your-api-id.execute-api.eu-north-1.amazonaws.com/prod
 
 ---
 
-## 📌 API Endpoints
-| **Method** | **Endpoint** | **Description** |
-|-----------|-------------|-----------------|
-| `POST` | `/upload` | Upload an image |
-| `GET` | `/images` | List all images |
-| `DELETE` | `/image/:id` | Delete an image |
-| `GET` | `/share/:id` | Generate a shareable link for an image |
-| `GET` | `/shorten/:id` | Generate a short link for a shared image |
-
----
-
 ## 🔥 Cost Optimization Strategies
 - ✅ **Use AWS Free Tier** for S3, Lambda, API Gateway, and DynamoDB where possible.
 - ✅ **Enable S3 Lifecycle Policies** to automatically delete unused images.
@@ -127,6 +126,9 @@ Backend API: https://your-api-id.execute-api.eu-north-1.amazonaws.com/prod
 - ✅ **Leverage AWS Lambda Auto-Scaling** to handle predictable upload traffic spikes efficiently.
 - ✅ **Utilize short links** to reduce unnecessary API calls and storage costs.
 - ✅ **Enforce pull request authorization** to prevent unintended deployments and maintain high code quality.
+- ✅ **Integrate tfsec** for Terraform security scanning to detect misconfigurations before deployment.
+- ✅ **Use Infracost** to estimate and monitor AWS infrastructure costs before applying Terraform changes.
+- ✅ **Optimize CloudFront cache invalidation** by clearing only changed files using AWS Lambda.
 
 ---
 
