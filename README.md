@@ -4,8 +4,8 @@ This demo project is a **full-stack image management platform** deployed on AWS.
 
 It allows users to **upload, manage, change image resolution, share and access images globally** utilising **CloudFront CDN**. 
 
-The entire infrastructure is automated with **Terraform**, while **GitHub Actions** ensures continuous deployment upon successful
-workflow consideration of the **github actions** pull request review, ##tfsec static analysis## to defined guidelines and ##Infracost infrastructure AWS costing steps.
+The entire infrastructure is automated with **Terraform**, while **GitHub Actions** in this example ensures continuous deployment upon successful
+workflow consideration of the **github actions** pull request review, ##tfsec static analysis## to defined guidelines and ##Infracost## infrastructure AWS costing steps.
 
 For simplicity and cost reduction no VPC, EC2, ECS OR EKS or traditional cloud structures are required.
 
@@ -200,6 +200,9 @@ Frontend: https://<cloudfront-id>.cloudfront.net
 Backend API: https://<api-id>.execute-api.eu-north-1.amazonaws.com/prod
 ```
 
+The pipeline can be re-written for other such CI/CD products such as Gitlab / Bitbucket / CircleCI / Jenkins etc within the 
+constraints of each platform.
+
 ---
 
 ## 🔥 Cost Optimization Strategies
@@ -216,7 +219,9 @@ Backend API: https://<api-id>.execute-api.eu-north-1.amazonaws.com/prod
 - ✅ **Optimize CloudFront cache invalidation** by clearing only changed files using AWS Lambda.
 
 ## 🔥 Cost Breakdown (Pay-As-You-Go Pricing)
+
 Service	Cost Model
+
 - AWS Lambda	Pay per execution + memory usage
 - API Gateway	Pay per API request
 - S3 Storage	Pay per GB stored
@@ -224,7 +229,9 @@ Service	Cost Model
 - CloudFront	Pay per data transfer
   
 ## 🔥 Estimated Costs
-Usage	Estimated Monthly Cost
+
+Usage	Estimated Monthly Cost at current AWS cost API dollar pricing.
+
 - 10,000 API Requests	~$1.00
 - 1 GB S3 Storage	~$0.023
 - 100,000 Lambda Executions	~$0.20
