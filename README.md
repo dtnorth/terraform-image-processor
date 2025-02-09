@@ -36,17 +36,17 @@ The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-t
 ## 📂 Project Structure
 ```plaintext
 📦 image-management-platform
- ┣ 📂 backend         # AWS Lambda function (Express API)
- ┃ ┣ 📜 server.js      # Handles API requests
+ ┣ 📂 backend              # AWS Lambda function (Express API)
+ ┃ ┣ 📜 server.js          # Handle API requests
  ┃ ┣ 📜 imageProcessor.js  # Handles image resizing
  ┃ ┣ 📜 urlShortener.js    # Handles URL shortening
- ┃ ┣ 📜 package.json
- ┃ ┣ 📜 lambda.zip
- ┣ 📂 frontend        # Next.js UI
- ┃ ┣ 📂 pages
- ┃ ┣ 📜 package.json
- ┃ ┣ 📜 index.js
- ┣ 📂 terraform       # AWS Infrastructure (S3, Lambda, CloudFront, API Gateway, DynamoDB)
+ ┃ ┣ 📜 package.json       # Configure React and Node dependencies.  
+ ┃ ┣ 📜 lambda.zip         # Deployable AWS Lambda
+ ┣ 📂 frontend             # Next.js UI
+ ┃ ┣ 📂 pages              
+ ┃ ┣ 📜 package.json       # Configure React and Node dependencies. 
+ ┃ ┣ 📜 index.js           # API Endpoints
+ ┣ 📂 terraform            # AWS Infrastructure (S3, Lambda, CloudFront, API Gateway, DynamoDB)
  ┃ ┣ 📜 backend.tf
  ┃ ┣ 📜 frontend.tf
  ┃ ┣ 📜 cloudfront.tf
@@ -54,9 +54,9 @@ The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-t
  ┃ ┣ 📜 iam.tf
  ┃ ┣ 📜 outputs.tf
  ┃ ┣ 📜 variables.tf
- ┃ ┣ 📜 providers.tf
- ┃ ┣ 📜 backend-config.tf (Terraform State)
- ┣ 📂 .github         # CI/CD GitHub Actions
+ ┃ ┣ 📜 providers.tf       # Fefine AWS Terraform providers
+ ┃ ┣ 📜 backend-config.tf  # Save Terraform State to S3 
+ ┣ 📂 .github              # CI/CD GitHub Actions
  ┃ ┣ 📜 deploy.yml
  ┗ 📜 README.md
 
