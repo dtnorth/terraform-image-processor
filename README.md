@@ -36,12 +36,17 @@ The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-t
 ## 📂 Project Structure
 ```plaintext
 📦 image-management-platform
- ┣ 📂 backend        # AWS Lambda function (Express API)
- ┃ ┣ 📜 server.js    # Handles image uploads, metadata, listing, sharing, and link shortening
- ┣ 📂 frontend       # Next.js (Fancy UI)
+ ┣ 📂 backend         # AWS Lambda function (Express API)
+ ┃ ┣ 📜 server.js      # Handles API requests
+ ┃ ┣ 📜 imageProcessor.js  # Handles image resizing
+ ┃ ┣ 📜 urlShortener.js    # Handles URL shortening
+ ┃ ┣ 📜 package.json
+ ┃ ┣ 📜 lambda.zip
+ ┣ 📂 frontend        # Next.js UI
  ┃ ┣ 📂 pages
- ┃ ┣ 📂 components
- ┣ 📂 terraform      # AWS Infrastructure (S3, Lambda, CloudFront, API Gateway, DynamoDB)
+ ┃ ┣ 📜 package.json
+ ┃ ┣ 📜 index.js
+ ┣ 📂 terraform       # AWS Infrastructure (S3, Lambda, CloudFront, API Gateway, DynamoDB)
  ┃ ┣ 📜 backend.tf
  ┃ ┣ 📜 frontend.tf
  ┃ ┣ 📜 cloudfront.tf
@@ -49,11 +54,12 @@ The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-t
  ┃ ┣ 📜 iam.tf
  ┃ ┣ 📜 outputs.tf
  ┃ ┣ 📜 variables.tf
- ┃ ┗ 📜 providers.tf
- ┣ 📂 .github
- ┃ ┗ 📂 workflows   # CI/CD automation with GitHub Actions
- ┃   ┗ 📜 deploy.yml
+ ┃ ┣ 📜 providers.tf
+ ┃ ┣ 📜 backend-config.tf (Terraform State)
+ ┣ 📂 .github         # CI/CD GitHub Actions
+ ┃ ┣ 📜 deploy.yml
  ┗ 📜 README.md
+
 ```
 
 ---
