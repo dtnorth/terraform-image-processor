@@ -5,10 +5,23 @@ This demo project is a **full-stack image management platform** deployed on AWS.
 It allows users to **upload, manage, change image resolution, share and access images globally** utilising:
 
 - **CloudFront CDN** UI presentation
-- **AWS S3 Storage** Image and Terraform state/ lock storage
-- **AWS API Gateway** for 
+- **AWS S3 Storage** All Image and Terraform state / Terraform lock file storage
+- **AWS API Gateway** Routes User Requests to AWS Lambda and Provides a Public HTTP API, Secures API Requests and caches responses
+  to reduce unnecessary Lambda executions whilst supporting rate limiting to prevent API abuse
 - **AWS DynamoDB** Image metadata and Terraform State , 
 - **AWS Lambda**
+  
+- The user uploads an image via API Gateway (POST /upload via UI).
+  2️⃣ API Gateway triggers AWS Lambda to process the request.
+  3️⃣ AWS Lambda:
+
+  Uploads the original user image to Amazon S3.
+  Creates resized images (e.g., 100px, 300px, 600px etc) using Sharp.
+  Generates a short URL for the image using DynamoDB.
+  
+  4️⃣ AWS Lambda returns the image URLs (original, resized, and short link).
+  5️⃣ The user can retrieve the image via the short URL (GET /short/{id} via the UI).
+- 
 - **NodeJS**
 - **Github Actions**
 - **AWS Serverless Scaling**
