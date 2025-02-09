@@ -6,6 +6,8 @@ It allows users to **upload, manage, share, and access images globally** using *
 
 The entire infrastructure is automated with **Terraform**, while **GitHub Actions** ensures continuous deployment. 
 
+For simplicity, no VPC, EC2, ECS OR EKS or traditional cloud structures are required.
+
 The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-tier offerings and minimizing unnecessary expenses.
 
 ---
