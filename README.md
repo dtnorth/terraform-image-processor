@@ -2,51 +2,50 @@
 
 This demo project is a **full-stack image management platform** deployed on AWS. 
 
-It allows users to **upload, manage, change image resolution, share and access images** whilst allowing for security, cost management, minimal app footprint and spikes in the apps usage utilising:
+It allows users to **upload, manage, change image resolution, share and access images** whilst allowing for security, cost management, minimal app footprint and handles spikes in the apps usage utilising:
 
 - **CloudFront CDN** UI presentation
+  
 - **AWS S3 Storage** All Image and Terraform state / Terraform lock file storage
+  
 - **AWS API Gateway** Routes User Requests to AWS Lambda and Provides a Public HTTP API, Secures API Requests and caches responses
   to reduce unnecessary Lambda executions whilst supporting rate limiting to prevent API abuse
-- **AWS DynamoDB** Image metadata and Terraform State , 
+
+- **AWS DynamoDB** Image metadata and Terraform State
+  
 - **AWS Lambda**
   
-- The user uploads an image via API Gateway (POST /upload via UI).
-  API Gateway triggers AWS Lambda to process the request.
-  
-- AWS Lambda:
-
-User uploads an image via an API call (POST /upload).
-API Gateway routes request to image_upload_lambda.
-image_upload_lambda:
-
-Saves the original image in S3.
-
-- Calls image_resize_lambda to create multiple sizes.
-- Calls url_shortener_lambda to generate a short link.
-- 
-User retrieves the image using a shortened URL (GET /short/{id}).
-CloudFront serves the images globally for fast performance.
-
-- **NodeJS**
 ```plaintext
-1️⃣ User uploads an image via API Gateway (POST /upload).
-2️⃣ API Gateway routes request to AWS Lambda, which is running Node.js (Express.js).
-3️⃣ Node.js (Express.js) in AWS Lambda:
+User uploads an image via an API call (POST / UI upload).
+API Gateway routes request to image_upload_lambda.
+image_upload_lambda: Saves the original image in S3.
 
-Uses Multer to process file uploads.
+- Calls image_resize_lambda to create multiple sizes to user resolution specification.
+- Calls url_shortener_lambda to generate a short link.
+
+User retrieves the image using a shortened URL (GET /short/{id}) via UI.
+CloudFront serves the images globally for fast performance.
+```
+- **NodeJS**
+  
+```plaintext
+User uploads an image via API Gateway (POST /upload).
+API Gateway routes request to AWS Lambda, which is running Node.js (Express.js).
+Node.js (Express.js) in AWS Lambda:
+
+Uses NodeJS Multer to process file uploads.
 Saves original image in Amazon S3.
-Calls sharp to create resized images.
-Calls DynamoDB to store short URLs.
+Calls NodeJSsharp to create resized images.
+Calls AWS DynamoDB to store short URLs.
 Node.js sends JSON response back to API Gateway with:
-Original image URL
-Resized image URLs
-Shortened URL
+- Original image URL
+- Resized image URLs
+- Shortened URL
 ```
 - **Github Actions**
 ```plaintext
 
-- Code Checkout	Fetches the latest version of the repository
+- Code Checkout	and branch creation fetches the latest version of the repository
 - Terraform Security Scan (tfsec)	Checks for security misconfigurations in Terraform based on the inhouse configuration of allowable practises in the tools config file.
 - Cost Estimation (Infracost)	Estimates AWS infrastructure cost before deployment based on the inhouse configuration of allowable practises in the tools config file.
 - Terraform Apply	Deploys AWS infrastructure (S3, Lambda, API Gateway, DynamoDB)
@@ -58,29 +57,28 @@ Shortened URL
 - **AWS Serverless Scaling**
 ```plaintext
   🚀 Scenario: A Sudden Surge in Image Uploads
-1️⃣ A user uploads an image, triggering POST /upload.
-2️⃣ API Gateway forwards the request to AWS Lambda.
-3️⃣ AWS Lambda runs the function and processes the image.
-4️⃣ More users upload images, so AWS Lambda scales automatically:
+- A user uploads an image, triggering POST /upload.
+- API Gateway forwards the request to AWS Lambda.
+- AWS Lambda runs the function and processes the image.
+- More users upload images, so AWS Lambda scales automatically:
+- Starts with zero instances.
+- Scales up to multiple instances if traffic increases.
+- Scales down to zero when demand drops.
+- DynamoDB scales up to handle more shortened URL lookups.
+- S3 stores all images, handling high traffic automatically.
+- CloudFront caches images, reducing the need for redundant Lambda invocations.
 
-Starts with zero instances.
-Scales up to multiple instances if traffic increases.
-Scales down to zero when demand drops.
-
-5️⃣ DynamoDB scales up to handle more shortened URL lookups.
-6️⃣ S3 stores all images, handling high traffic automatically.
-7️⃣ CloudFront caches images, reducing the need for redundant Lambda invocations.
 ✅ Result: The system scales without downtime or manual intervention!
 ```
 - **Cloudwatch**
 ```plaintext
   🚀 Scenario: Monitoring a High-Traffic Image Upload
-1️⃣ User uploads an image via API Gateway (POST /upload).
-2️⃣ API Gateway logs the request in CloudWatch.
-3️⃣ AWS Lambda runs the function, and CloudWatch records execution time, errors, and memory usage.
-4️⃣ If Lambda execution time exceeds x seconds, CloudWatch triggers an alert via SNS (Email, Slack, etc.).
-5️⃣ DynamoDB auto-scales, and CloudWatch logs throughput usage.
-6️⃣ CloudFront caches images, and CloudWatch tracks cache hit rates.
+- User uploads an image via API Gateway (POST /upload).
+- API Gateway logs the request in CloudWatch.
+- AWS Lambda runs the function, and CloudWatch records execution time, errors, and memory usage.
+- If Lambda execution time exceeds x seconds, CloudWatch triggers an alert via SNS (Email, Slack, etc.).
+- DynamoDB auto-scales, and CloudWatch logs throughput usage.
+- CloudFront caches images, and CloudWatch tracks cache hit rates.
 
 ✅ Result: Real-time monitoring of system performance and automatic scaling adjustments.
 ```
@@ -89,7 +87,7 @@ workflow consideration of the **github actions** pull request review, ##tfsec st
 
 For simplicity and cost reduction no VPC, EC2, ECS OR EKS or traditional cloud structures are required.
 
-The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-tier offerings and minimizing unnecessary expense.
+The architecture is optimized for **cost-effectiveness**, **performance optimisation utilizing AWS's free-tier offerings and minimizing unnecessary expense.
 
 ---
 
@@ -110,6 +108,7 @@ The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-t
 - **Cost Estimation:** Uses **Infracost** to estimate and track AWS infrastructure costs in GitHub Actions  
 - **CloudFront Cache Invalidation:** AWS Lambda function to automatically clear the CloudFront cache for changed files only
 - **Terraform State Storage**: Terraform state is stored in an AWS S3 bucket with DynamoDB state locking to prevent conflicts
+- **Route53** costs would apply if not using AWS generated URLs. If using Custom API Domains, Custom Image Sharing Domain names or Custom Frontend Domain names.
 
 ---
 
@@ -121,19 +120,23 @@ The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-t
  ┃ ┣ 📜 imageProcessor.js  # Handles image resizing
  ┃ ┣ 📜 urlShortener.js    # Handles URL shortening
  ┃ ┣ 📜 package.json       # Configure React and Node dependencies.  
- ┃ ┣ 📜 lambda.zip         # Deployable AWS Lambda
+ ┃ ┣ 📜 lambda.zip         # Deployable zipped AWS Lambda for Terraform upload.
  ┣ 📂 frontend             # Next.js UI
  ┃ ┣ 📂 pages              
  ┃ ┣ 📜 package.json       # Configure React and Node dependencies. 
  ┃ ┣ 📜 index.js           # API Endpoints
  ┣ 📂 terraform            # AWS Infrastructure (S3, Lambda, CloudFront, API Gateway, DynamoDB)
- ┃ ┣ 📜 backend.tf
- ┃ ┣ 📜 frontend.tf
- ┃ ┣ 📜 cloudfront.tf
- ┃ ┣ 📜 lambda.tf
- ┃ ┣ 📜 iam.tf
- ┃ ┣ 📜 outputs.tf
- ┃ ┣ 📜 variables.tf
+ ┃ ┣ 📜 backend.tf         # Runs the backend logic (image processing, resizing, URL shortening),
+- Exposes the Lambda function as a RESTful API
+- Stores shortened URLs in conjuction with DynamoDB for image sharing
+- Grants permissions for Lambda to access S3, DynamoDB, and API Gateway
+  ┃ ┣ 📜 frontend.tf        # S3 BucketStores the Next.js static files (frontend) cloudFront Distribution	Serves the website
+= securely & globally Bucket Policy	Makes the S3 content publicly accessible via CloudFront
+ ┃ ┣ 📜 cloudfront.tf      # CloudFront for S3	Serves the frontend (Next.js, Express.js, index.js and associated CSS files, prettyfying the UI)
+ ┃ ┣ 📜 lambda.tf          # Deploy Github built Lambdas as zip files to S3 storage.
+ ┃ ┣ 📜 iam.tf             # Define security controls.
+ ┃ ┣ 📜 outputs.tf         # Show AWS API endpoint and URL's
+ ┃ ┣ 📜 variables.tf       # Define aws_region, s3_bucket_name, lambda_function_name, api_gateway_stage, dynamodb_table_name. 
  ┃ ┣ 📜 providers.tf       # Define AWS Terraform providers
  ┃ ┣ 📜 backend-config.tf  # Save Terraform State to S3 
  ┣ 📂 .github              # CI/CD GitHub Actions
@@ -141,8 +144,6 @@ The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-t
  ┗ 📜 README.md
 
 ```
-
----
 
 ## 🏗️ Infrastructure Overview
 
