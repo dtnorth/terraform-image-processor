@@ -44,16 +44,16 @@ Resized image URLs
 Shortened URL
 ```
 - **Github Actions**
-- ```plaintext
+```plaintext
 
-Code Checkout	Fetches the latest version of the repository
-Terraform Security Scan (tfsec)	Checks for security misconfigurations in Terraform based on the inhouse configuration of allowable practises in the tools config file.
-Cost Estimation (Infracost)	Estimates AWS infrastructure cost before deployment based on the inhouse configuration of allowable practises in the tools config file.
-Terraform Apply	Deploys AWS infrastructure (S3, Lambda, API Gateway, DynamoDB)
-Build & Package Lambda	Installs dependencies and creates lambda.zip
-Upload Lambda to S3	Stores the ZIP package in an S3 bucket
-Update Lambda Code	Deploys the latest function version to AWS
-CloudFront Cache Invalidation	ensures the latest frontend is served whilst only invalidating changed code in the cache to ensure cost minimisation.
+- Code Checkout	Fetches the latest version of the repository
+- Terraform Security Scan (tfsec)	Checks for security misconfigurations in Terraform based on the inhouse configuration of allowable practises in the tools config file.
+- Cost Estimation (Infracost)	Estimates AWS infrastructure cost before deployment based on the inhouse configuration of allowable practises in the tools config file.
+- Terraform Apply	Deploys AWS infrastructure (S3, Lambda, API Gateway, DynamoDB)
+- Build & Package Lambda	Installs NodeJS dependencies and creates lambda.zip
+- Upload Lambda to S3	Stores the ZIP package in an S3 bucket
+- Update Lambda Code	Deploys the latest function version to AWS
+- CloudFront Cache Invalidation	ensures the latest frontend is served whilst only invalidating changed code in the cache to ensure cost minimisation.
 ```
 - **AWS Serverless Scaling**
 ```plaintext
