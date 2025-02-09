@@ -1,6 +1,6 @@
 # 📸 AWS Image Management Platform
 
-This project is a **full-stack image management platform** deployed on AWS. It allows users to **upload, manage, share, and access images globally** using **CloudFront CDN**. The entire infrastructure is automated with **Terraform**, while **GitHub Actions** ensures continuous deployment. The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-tier offerings and minimizing unnecessary expenses.
+This demo project is a **full-stack image management platform** deployed on AWS. It allows users to **upload, manage, share, and access images globally** using **CloudFront CDN**. The entire infrastructure is automated with **Terraform**, while **GitHub Actions** ensures continuous deployment. The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-tier offerings and minimizing unnecessary expenses.
 
 ---
 
