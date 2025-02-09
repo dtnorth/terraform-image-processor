@@ -4,7 +4,13 @@ This project is a full-stack image management platform deployed on AWS. It allow
 
 🚀 Features
 
-✅ Frontend: Next.js hosted on AWS S3 & served via CloudFront CDN✅ Backend: AWS Lambda (Node.js/Express) behind an API Gateway✅ Storage: AWS S3 for storing original and resized images✅ Database: AWS DynamoDB for storing metadata (URLs, timestamps, etc.)✅ CI/CD: GitHub Actions for automatic deployments✅ Security: IAM roles for permissions & API Gateway securing API requests✅ Monitoring: AWS CloudWatch for logs & performance metrics
+✅ Frontend: Next.js hosted on AWS S3 & served via CloudFront CDN
+✅ Backend: AWS Lambda (Node.js/Express) behind an API Gateway
+✅ Storage: AWS S3 for storing original and resized images
+✅ Database: AWS DynamoDB for storing metadata (URLs, timestamps, etc.)
+✅ CI/CD: GitHub Actions for automatic deployments
+✅ Security: IAM roles for permissions & API Gateway securing API requests
+✅ Monitoring: AWS CloudWatch for logs & performance metrics
 
 📂 Project Structure
 
