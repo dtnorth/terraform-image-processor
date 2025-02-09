@@ -215,6 +215,22 @@ Backend API: https://<api-id>.execute-api.eu-north-1.amazonaws.com/prod
 - ✅ **Use Infracost** to estimate and monitor AWS infrastructure costs before applying Terraform changes.
 - ✅ **Optimize CloudFront cache invalidation** by clearing only changed files using AWS Lambda.
 
+## 🔥 Cost Breakdown (Pay-As-You-Go Pricing)
+Service	Cost Model
+- AWS Lambda	Pay per execution + memory usage
+- API Gateway	Pay per API request
+- S3 Storage	Pay per GB stored
+- DynamoDB	Pay per read/write request
+- CloudFront	Pay per data transfer
+  
+## 🔥 Estimated Costs
+Usage	Estimated Monthly Cost
+- 10,000 API Requests	~$1.00
+- 1 GB S3 Storage	~$0.023
+- 100,000 Lambda Executions	~$0.20
+- DynamoDB (1GB Data)	~$0.25
+- Total estimated cost: ~$1.50 to $5.00 per month, depending on usage!
+
 ---
 
 
