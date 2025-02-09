@@ -4,7 +4,8 @@ This demo project is a **full-stack image management platform** deployed on AWS.
 
 It allows users to **upload, manage, share, and access images globally** using **CloudFront CDN**. 
 
-The entire infrastructure is automated with **Terraform**, while **GitHub Actions** ensures continuous deployment. 
+The entire infrastructure is automated with **Terraform**, while **GitHub Actions** ensures continuous deployment upon successful
+workflow consideration of the **github actions** security and costing steps.
 
 For simplicity, no VPC, EC2, ECS OR EKS or traditional cloud structures are required.
 
@@ -18,7 +19,7 @@ The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-t
 - **Backend:** AWS Lambda (Node.js/Express) behind an API Gateway with pay-as-you-go pricing  
 - **Storage:** AWS S3 for storing original and resized images with lifecycle policies to delete unused files  
 - **Database:** AWS DynamoDB with on-demand mode to minimize costs for metadata storage  
-- **Auto-Scaling:** Leverage AWS **Lambda's serverless scaling** to handle traffic spikes automatically  
+- **Auto-Scaling:** Leverages AWS **Lambda's serverless scaling** to handle traffic spikes automatically.  
 - **Sharing:** Users can generate **public shareable links** for images without increasing infrastructure costs  
 - **Link Shortening:** Shortened URLs for shared images using AWS DynamoDB and API Gateway  
 - **CI/CD:** GitHub Actions for automated deployments without additional infrastructure expenses  
