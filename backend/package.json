@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.744.0",
+    "@aws-sdk/client-s3": "^3.744.0",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1",
+    "serverless-http": "^3.2.0",
+    "sharp": "^0.33.5",
+    "shortid": "^2.2.17"
+  },
+  "description": ""
+}
