@@ -2,8 +2,17 @@
 
 This demo project is a **full-stack image management platform** deployed on AWS. 
 
-It allows users to **upload, manage, change image resolution, share and access images globally** utilising **CloudFront CDN**. ##S3##, ##API Gateway##, ##DynamoDB##, ##Lambda## 
-##NodeJS##, ##Github Actions##, ##AWS Serverless Scaling##, ##Cloudwatch## 
+It allows users to **upload, manage, change image resolution, share and access images globally** utilising:
+
+- **CloudFront CDN** UI presentation
+- **AWS S3 Storage** Image and Terraform state/ lock storage
+- **AWS API Gateway** for 
+- **AWS DynamoDB** Image metadata and Terraform State , 
+- **AWS Lambda**
+- **NodeJS**
+- **Github Actions**
+- **AWS Serverless Scaling**
+- **Cloudwatch**
 
 The entire infrastructure is automated with **Terraform**, while **GitHub Actions** in this example ensures continuous deployment upon successful
 workflow consideration of the **github actions** pull request review, ##tfsec static analysis## to defined guidelines and ##Infracost## infrastructure AWS costing steps.
@@ -55,7 +64,7 @@ The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-t
  ┃ ┣ 📜 iam.tf
  ┃ ┣ 📜 outputs.tf
  ┃ ┣ 📜 variables.tf
- ┃ ┣ 📜 providers.tf       # Fefine AWS Terraform providers
+ ┃ ┣ 📜 providers.tf       # Define AWS Terraform providers
  ┃ ┣ 📜 backend-config.tf  # Save Terraform State to S3 
  ┣ 📂 .github              # CI/CD GitHub Actions
  ┃ ┣ 📜 deploy.yml
