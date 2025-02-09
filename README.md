@@ -88,7 +88,7 @@ The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-t
 - **AWS Lambda function detects changed files and invalidates only those files in CloudFront**, preventing full cache invalidation.
 
 ### GitHub Actions Workflow Steps:
-
+```plaintext
 name: CI/CD Pipeline for AWS Image Management Platform
 
 on:
@@ -163,7 +163,7 @@ jobs:
         run: |
           DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[0].Id" --output text)
           aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths ${{ steps.changed_files.outputs.files }}
-
+```
 ---
 
 ## 🔧 Deployment Steps
