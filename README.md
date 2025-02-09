@@ -11,6 +11,7 @@ The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-t
 ---
 
 ## 🚀 Features
+
 - **Frontend:** Next.js hosted on AWS S3 & served via CloudFront CDN for low-cost, high-speed delivery  
 - **Backend:** AWS Lambda (Node.js/Express) behind an API Gateway with pay-as-you-go pricing  
 - **Storage:** AWS S3 for storing original and resized images with lifecycle policies to delete unused files  
@@ -22,7 +23,7 @@ The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-t
 - **Security:** IAM roles for access control & API Gateway securing API requests efficiently  
 - **Monitoring:** AWS CloudWatch for logs & performance tracking with basic monitoring to reduce logging costs  
 - **Pull Request Authorization:** All Git pushes require approval via pull requests before merging to the main branch  
-- **Terraform Security Scanning:** Uses **tfsec** for static analysis security scanning of Terraform code in GitHub Actions  
+- **Terraform Security Scanning:** Uses **tfsec** for static analysis security scanning of Terraform code in GitHub Actions, failure causing the workflow to fail.  
 - **Cost Estimation:** Uses **Infracost** to estimate and track AWS infrastructure costs in GitHub Actions  
 - **CloudFront Cache Invalidation:** AWS Lambda function to automatically clear the CloudFront cache for changed files only
 - **Terraform State Storage**: Terraform state is stored in an AWS S3 bucket with DynamoDB state locking to prevent conflicts
