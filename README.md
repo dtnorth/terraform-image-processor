@@ -8,7 +8,7 @@ The entire infrastructure is automated with **Terraform**, while **GitHub Action
 
 For simplicity, no VPC, EC2, ECS OR EKS or traditional cloud structures are required.
 
-The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-tier offerings and minimizing unnecessary expenses.
+The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-tier offerings and minimizing unnecessary expense.
 
 ---
 
