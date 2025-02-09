@@ -1,6 +1,12 @@
 # 📸 AWS Image Management Platform
 
-This demo project is a **full-stack image management platform** deployed on AWS. It allows users to **upload, manage, share, and access images globally** using **CloudFront CDN**. The entire infrastructure is automated with **Terraform**, while **GitHub Actions** ensures continuous deployment. The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-tier offerings and minimizing unnecessary expenses.
+This demo project is a **full-stack image management platform** deployed on AWS. 
+
+It allows users to **upload, manage, share, and access images globally** using **CloudFront CDN**. 
+
+The entire infrastructure is automated with **Terraform**, while **GitHub Actions** ensures continuous deployment. 
+
+The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-tier offerings and minimizing unnecessary expenses.
 
 ---
 
@@ -9,7 +15,7 @@ This demo project is a **full-stack image management platform** deployed on AWS.
 - **Backend:** AWS Lambda (Node.js/Express) behind an API Gateway with pay-as-you-go pricing  
 - **Storage:** AWS S3 for storing original and resized images with lifecycle policies to delete unused files  
 - **Database:** AWS DynamoDB with on-demand mode to minimize costs for metadata storage  
-- **Auto-Scaling:** Leverages AWS **Lambda's serverless scaling** to handle traffic spikes automatically  
+- **Auto-Scaling:** Leverage AWS **Lambda's serverless scaling** to handle traffic spikes automatically  
 - **Sharing:** Users can generate **public shareable links** for images without increasing infrastructure costs  
 - **Link Shortening:** Shortened URLs for shared images using AWS DynamoDB and API Gateway  
 - **CI/CD:** GitHub Actions for automated deployments without additional infrastructure expenses  
@@ -18,7 +24,8 @@ This demo project is a **full-stack image management platform** deployed on AWS.
 - **Pull Request Authorization:** All Git pushes require approval via pull requests before merging to the main branch  
 - **Terraform Security Scanning:** Uses **tfsec** for static analysis security scanning of Terraform code in GitHub Actions  
 - **Cost Estimation:** Uses **Infracost** to estimate and track AWS infrastructure costs in GitHub Actions  
-- **CloudFront Cache Invalidation:** AWS Lambda function to automatically clear the CloudFront cache for changed files only  
+- **CloudFront Cache Invalidation:** AWS Lambda function to automatically clear the CloudFront cache for changed files only
+- **Terraform State Storage**: Terraform state is stored in an AWS S3 bucket with DynamoDB state locking to prevent conflicts
 
 ---
 
@@ -70,6 +77,83 @@ This demo project is a **full-stack image management platform** deployed on AWS.
 - **Infracost is integrated** to provide cost estimation before deploying Terraform changes.
 - **AWS Lambda function detects changed files and invalidates only those files in CloudFront**, preventing full cache invalidation.
 
+### GitHub Actions Workflow Steps:
+
+name: CI/CD Pipeline for AWS Image Management Platform
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  security_scan:
+    name: Run tfsec Security Scan
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-action@v1
+        with:
+          working_directory: terraform/
+
+  cost_estimation:
+    name: Run Infracost Cost Estimation
+    runs-on: self-hosted
+    needs: security_scan
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Setup Infracost
+        uses: infracost/actions/setup@v2
+      - name: Run Infracost
+        run: |
+          infracost breakdown --path terraform/ --format json --out-file infracost.json
+          cat infracost.json
+
+  deploy_infrastructure:
+    name: Deploy Infrastructure with Terraform
+    runs-on: self-hosted
+    needs: cost_estimation
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+      - name: Terraform Init & Apply
+        run: |
+          cd terraform
+          terraform init
+          terraform apply -auto-approve
+
+  deploy_application:
+    name: Deploy Backend & Frontend
+    runs-on: self-hosted
+    needs: deploy_infrastructure
+    steps:
+      - name: Deploy Backend (Lambda, API Gateway)
+        run: echo "Deploying backend..."
+      - name: Deploy Frontend (S3, CloudFront)
+        run: echo "Deploying frontend..."
+
+  cloudfront_invalidation:
+    name: Invalidate CloudFront Cache for Changed Files
+    runs-on: self-hosted
+    needs: deploy_application
+    steps:
+      - name: Detect Changed Files
+        id: changed_files
+        run: |
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD | grep frontend/out/ || echo "")
+          echo "Changed files: $CHANGED_FILES"
+          echo "::set-output name=files::$CHANGED_FILES"
+      - name: Invalidate CloudFront Cache
+        if: steps.changed_files.outputs.files != ''
+        run: |
+          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[0].Id" --output text)
+          aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths ${{ steps.changed_files.outputs.files }}
+
 ---
 
 ## 🔧 Deployment Steps
@@ -79,23 +163,14 @@ This demo project is a **full-stack image management platform** deployed on AWS.
   - `AWS_ACCESS_KEY_ID`
   - `AWS_SECRET_ACCESS_KEY`
 
-### **2️⃣ Deploy Infrastructure with Terraform**
-```sh
-cd terraform
-tfsec .  # Run tfsec security checks
-infracost breakdown --path .  # Run cost estimation
-terraform init
-terraform apply -auto-approve
-```
-
 ### **3️⃣ Submit a Pull Request for Code Changes**
 - Push your changes to a **feature branch**:
 ```sh
 git add .
 git commit -m "🚀 New feature implementation"
-git push origin feature-branch
+git push origin <feature-branch>
 ```
-- Open a pull request in GitHub and request a review before merging.
+- Open a pull request in GitHub and request a peer review before merging.
 
 ### **4️⃣ Merge Approved Pull Request & Deploy**
 Once the pull request is approved and merged to `main`, GitHub Actions will **automatically deploy** the backend & frontend:
@@ -111,8 +186,8 @@ terraform output
 ```
 Then open:
 ```plaintext
-Frontend: https://your-cloudfront-id.cloudfront.net
-Backend API: https://your-api-id.execute-api.eu-north-1.amazonaws.com/prod
+Frontend: https://<cloudfront-id>.cloudfront.net
+Backend API: https://<api-id>.execute-api.eu-north-1.amazonaws.com/prod
 ```
 
 ---
