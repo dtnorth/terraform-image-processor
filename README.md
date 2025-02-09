@@ -29,7 +29,7 @@ User retrieves the image using a shortened URL (GET /short/{id}).
 CloudFront serves the images globally for fast performance.
 
 - **NodeJS**
-
+```plaintext
 1️⃣ User uploads an image via API Gateway (POST /upload).
 2️⃣ API Gateway routes request to AWS Lambda, which is running Node.js (Express.js).
 3️⃣ Node.js (Express.js) in AWS Lambda:
@@ -42,8 +42,9 @@ Node.js sends JSON response back to API Gateway with:
 Original image URL
 Resized image URLs
 Shortened URL
-
+```
 - **Github Actions**
+- ```plaintext
 
 Code Checkout	Fetches the latest version of the repository
 Terraform Security Scan (tfsec)	Checks for security misconfigurations in Terraform based on the inhouse configuration of allowable practises in the tools config file.
@@ -53,9 +54,9 @@ Build & Package Lambda	Installs dependencies and creates lambda.zip
 Upload Lambda to S3	Stores the ZIP package in an S3 bucket
 Update Lambda Code	Deploys the latest function version to AWS
 CloudFront Cache Invalidation	ensures the latest frontend is served whilst only invalidating changed code in the cache to ensure cost minimisation.
-  
+```
 - **AWS Serverless Scaling**
-
+```plaintext
   🚀 Scenario: A Sudden Surge in Image Uploads
 1️⃣ A user uploads an image, triggering POST /upload.
 2️⃣ API Gateway forwards the request to AWS Lambda.
@@ -65,13 +66,14 @@ CloudFront Cache Invalidation	ensures the latest frontend is served whilst only 
 Starts with zero instances.
 Scales up to multiple instances if traffic increases.
 Scales down to zero when demand drops.
+
 5️⃣ DynamoDB scales up to handle more shortened URL lookups.
 6️⃣ S3 stores all images, handling high traffic automatically.
 7️⃣ CloudFront caches images, reducing the need for redundant Lambda invocations.
 ✅ Result: The system scales without downtime or manual intervention!
-
+```
 - **Cloudwatch**
-
+```plaintext
   🚀 Scenario: Monitoring a High-Traffic Image Upload
 1️⃣ User uploads an image via API Gateway (POST /upload).
 2️⃣ API Gateway logs the request in CloudWatch.
@@ -81,7 +83,7 @@ Scales down to zero when demand drops.
 6️⃣ CloudFront caches images, and CloudWatch tracks cache hit rates.
 
 ✅ Result: Real-time monitoring of system performance and automatic scaling adjustments.
-
+```
 The entire infrastructure is automated with **Terraform**, while **GitHub Actions** in this example ensures continuous deployment upon successful
 workflow consideration of the **github actions** pull request review, ##tfsec static analysis## to defined guidelines and ##Infracost## infrastructure AWS costing steps.
 
