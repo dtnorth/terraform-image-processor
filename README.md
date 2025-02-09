@@ -2,7 +2,8 @@
 
 This demo project is a **full-stack image management platform** deployed on AWS. 
 
-It allows users to **upload, manage, change image resolution, share and access images globally** utilising **CloudFront CDN**. 
+It allows users to **upload, manage, change image resolution, share and access images globally** utilising **CloudFront CDN**. ##S3##, ##API Gateway##, ##DynamoDB##, ##Lambda## 
+##NodeJS##, ##Github Actions##, ##AWS Serverless Scaling##, ##Cloudwatch## 
 
 The entire infrastructure is automated with **Terraform**, while **GitHub Actions** in this example ensures continuous deployment upon successful
 workflow consideration of the **github actions** pull request review, ##tfsec static analysis## to defined guidelines and ##Infracost## infrastructure AWS costing steps.
