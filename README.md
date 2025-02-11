@@ -328,5 +328,10 @@ Usage	Estimated Monthly Cost at current AWS cost API dollar pricing.
 - Auto Image Conversion in Lambda	Ensures best image quality without user effort
 - API Gateway with WebSockets (Future)	Enables real-time uploads for mobile apps
 
+## 🔥 Route53 Considerations
+
+- Route 53 is NOT required if using AWS-provided default URLs.
+- Route 53 is required if we want a custom domain name like api.example.com or app.example.com.
+
 
 
