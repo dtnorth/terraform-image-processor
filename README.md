@@ -1,19 +1,94 @@
 # 📸 AWS Image Management Platform
 
-This demo project is a **full-stack image management platform** deployed on AWS. 
+This demo project is a **full-stack image management platform** deployable on AWS. 
 
-It allows users to **upload, manage, share, and access images globally** using **CloudFront CDN**. 
+It allows users to **upload, manage, change image resolution, share and access images** whilst allowing for security, cost management, minimal app footprint and handles spikes in the apps usage utilising:
 
-The entire infrastructure is automated with **Terraform**, while **GitHub Actions** ensures continuous deployment upon successful
-workflow consideration of the **github actions** security and costing steps.
+- **CloudFront CDN** UI presentation optimised for both Computer and Mobile users.
+  
+- **AWS S3 Storage** All Image and Terraform state / Terraform lock file storage
+  
+- **AWS API Gateway** Routes User Requests to AWS Lambda and Provides a Public HTTP API, Secures API Requests and caches responses
+  to reduce unnecessary Lambda executions whilst supporting rate limiting to prevent API abuse
+
+- **AWS DynamoDB** Image metadata and Terraform State
+  
+- **AWS Lambda**
+  
+```plaintext
+- User uploads an image via an API call (POST / UI upload).
+- API Gateway routes request to image_upload_lambda.
+- image_upload_lambda: Saves the original image in S3.
+- Calls image_resize_lambda to create multiple sizes to user resolution specification.
+- Calls url_shortener_lambda to generate a short link.
+- User retrieves the image using a shortened URL (GET /short/{id}) via UI.
+- CloudFront serves the images globally for fast performance.
+```
+- **NodeJS**
+  
+```plaintext
+- User uploads an image via API Gateway (POST /upload).
+- API Gateway routes request to AWS Lambda, which is running Node.js (Express.js).
+- Node.js (Express.js) in AWS Lambda:
+- Uses NodeJS Multer to process file uploads.
+- Saves original image in Amazon S3.
+- Calls NodeJSsharp to create resized images.
+- Calls AWS DynamoDB to store short URLs.
+- Node.js sends JSON response back to API Gateway with:
+- Original image URL
+- Resized image URLs
+- Shortened URL
+```
+- **Github Actions**
+```plaintext
+
+- Code Checkout	and branch creation fetches the latest version of the repository
+- Terraform Security Scan (tfsec)	Checks for security misconfigurations in Terraform based on the inhouse configuration of allowable practises in the tools config file.
+- Cost Estimation (Infracost)	Estimates AWS infrastructure cost before deployment based on the inhouse configuration of allowable practises in the tools config file.
+- Terraform Apply	Deploys AWS infrastructure (S3, Lambda, API Gateway, DynamoDB)
+- Build & Package Lambda	Installs NodeJS dependencies and creates lambda.zip
+- Upload Lambda to S3	Stores the ZIP package in an S3 bucket
+- Update Lambda Code	Deploys the latest function version to AWS
+- CloudFront Cache Invalidation	ensures the latest frontend is served whilst only invalidating changed code in the cache to ensure cost minimisation.
+```
+- **AWS Serverless Scaling**
+```plaintext
+  Scenario: A Sudden Surge in Image Uploads
+- A user uploads an image, triggering POST /upload.
+- API Gateway forwards the request to AWS Lambda.
+- AWS Lambda runs the function and processes the image.
+- More users upload images, so AWS Lambda scales automatically:
+- Starts with zero instances.
+- Scales up to multiple instances if traffic increases.
+- Scales down to zero when demand drops.
+- DynamoDB scales up to handle more shortened URL lookups.
+- S3 stores all images, handling high traffic automatically.
+- CloudFront caches images, reducing the need for redundant Lambda invocations.
+
+Result: The system scales without downtime or manual intervention!
+```
+- **Cloudwatch**
+```plaintext
+  🚀 Scenario: Monitoring a High-Traffic Image Upload
+- User uploads an image via API Gateway (POST /upload).
+- API Gateway logs the request in CloudWatch.
+- AWS Lambda runs the function, and CloudWatch records execution time, errors, and memory usage.
+- If Lambda execution time exceeds x seconds, CloudWatch triggers an alert via SNS (Email, Slack, etc.).
+- DynamoDB auto-scales, and CloudWatch logs throughput usage.
+- CloudFront caches images, and CloudWatch tracks cache hit rates.
+
+Result: Real-time monitoring of system performance and automatic scaling adjustments.
+```
+The entire infrastructure is automated with **Terraform**, while **GitHub Actions** in this example ensures continuous deployment upon successful
+workflow consideration of the **github actions** pull request review, ##tfsec static analysis## to defined guidelines and ##Infracost## infrastructure AWS costing steps.
 
 For simplicity and cost reduction no VPC, EC2, ECS OR EKS or traditional cloud structures are required.
 
-The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-tier offerings and minimizing unnecessary expense.
+The architecture is optimized for **cost-effectiveness**, **performance optimisation utilizing AWS's free-tier offerings and minimizing unnecessary expense.
 
 ---
 
-## 🚀 Features
+## Features
 
 - **Frontend:** Next.js hosted on AWS S3 & served via CloudFront CDN for low-cost, high-speed delivery  
 - **Backend:** AWS Lambda (Node.js/Express) behind an API Gateway with pay-as-you-go pricing  
@@ -30,41 +105,44 @@ The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-t
 - **Cost Estimation:** Uses **Infracost** to estimate and track AWS infrastructure costs in GitHub Actions  
 - **CloudFront Cache Invalidation:** AWS Lambda function to automatically clear the CloudFront cache for changed files only
 - **Terraform State Storage**: Terraform state is stored in an AWS S3 bucket with DynamoDB state locking to prevent conflicts
+- **Route53** costs would apply if not using AWS generated URLs. If using Custom API Domains, Custom Image Sharing Domain names or Custom Frontend Domain names.
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 ```plaintext
 📦 image-management-platform
- ┣ 📂 backend         # AWS Lambda function (Express API)
- ┃ ┣ 📜 server.js      # Handles API requests
+ ┣ 📂 backend              # AWS Lambda function (Express API)
+ ┃ ┣ 📜 server.js          # Handle API requests
  ┃ ┣ 📜 imageProcessor.js  # Handles image resizing
  ┃ ┣ 📜 urlShortener.js    # Handles URL shortening
- ┃ ┣ 📜 package.json
- ┃ ┣ 📜 lambda.zip
- ┣ 📂 frontend        # Next.js UI
- ┃ ┣ 📂 pages
- ┃ ┣ 📜 package.json
- ┃ ┣ 📜 index.js
- ┣ 📂 terraform       # AWS Infrastructure (S3, Lambda, CloudFront, API Gateway, DynamoDB)
- ┃ ┣ 📜 backend.tf
- ┃ ┣ 📜 frontend.tf
- ┃ ┣ 📜 cloudfront.tf
- ┃ ┣ 📜 lambda.tf
- ┃ ┣ 📜 iam.tf
- ┃ ┣ 📜 outputs.tf
- ┃ ┣ 📜 variables.tf
- ┃ ┣ 📜 providers.tf
- ┃ ┣ 📜 backend-config.tf (Terraform State)
- ┣ 📂 .github         # CI/CD GitHub Actions
+ ┃ ┣ 📜 package.json       # Configure React and Node dependencies.  
+ ┃ ┣ 📜 lambda.zip         # Deployable zipped AWS Lambda for Terraform upload.
+ ┣ 📂 frontend             # Next.js UI
+ ┃ ┣ 📂 pages              
+ ┃ ┣ 📜 package.json       # Configure React and Node dependencies. 
+ ┃ ┣ 📜 index.js           # API Endpoints
+ ┣ 📂 terraform            # AWS Infrastructure (S3, Lambda, CloudFront, API Gateway, DynamoDB)
+ ┃ ┣ 📜 backend.tf         # Runs the backend logic (image processing, resizing, URL shortening),
+- Exposes the Lambda function as a RESTful API
+- Stores shortened URLs in conjuction with DynamoDB for image sharing
+- Grants permissions for Lambda to access S3, DynamoDB, and API Gateway
+  ┃ ┣ 📜 frontend.tf        # S3 BucketStores the Next.js static files (frontend) cloudFront Distribution	Serves the website
+= securely & globally Bucket Policy	Makes the S3 content publicly accessible via CloudFront
+ ┃ ┣ 📜 cloudfront.tf      # CloudFront for S3	Serves the frontend (Next.js, Express.js, index.js and associated CSS files, prettyfying the UI)
+ ┃ ┣ 📜 lambda.tf          # Deploy Github built Lambdas as zip files to S3 storage.
+ ┃ ┣ 📜 iam.tf             # Define security controls.
+ ┃ ┣ 📜 outputs.tf         # Show AWS API endpoint and URL's
+ ┃ ┣ 📜 variables.tf       # Define aws_region, s3_bucket_name, lambda_function_name, api_gateway_stage, dynamodb_table_name. 
+ ┃ ┣ 📜 providers.tf       # Define AWS Terraform providers
+ ┃ ┣ 📜 backend-config.tf  # Save Terraform State to S3 
+ ┣ 📂 .github              # CI/CD GitHub Actions
  ┃ ┣ 📜 deploy.yml
  ┗ 📜 README.md
 
 ```
 
----
-
-## 🏗️ Infrastructure Overview
+## Infrastructure Overview
 
 ### **Frontend (Next.js + S3 + CloudFront)**
 - The Next.js application is **statically exported** and stored in **S3**.
@@ -88,7 +166,7 @@ The architecture is optimized for **cost-effectiveness**, utilizing AWS's free-t
 - **AWS Lambda function detects changed files and invalidates only those files in CloudFront**, preventing full cache invalidation.
 
 ### GitHub Actions Workflow Steps:
-
+```plaintext
 name: CI/CD Pipeline for AWS Image Management Platform
 
 on:
@@ -163,10 +241,10 @@ jobs:
         run: |
           DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[0].Id" --output text)
           aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths ${{ steps.changed_files.outputs.files }}
-
+```
 ---
 
-## 🔧 Deployment Steps
+## Deployment Steps
 
 ### **1️⃣ Set Up AWS Credentials in GitHub Actions**
 - Go to **GitHub > Settings > Secrets** and add:
@@ -200,37 +278,98 @@ Frontend: https://<cloudfront-id>.cloudfront.net
 Backend API: https://<api-id>.execute-api.eu-north-1.amazonaws.com/prod
 ```
 
+The pipeline can be re-written for other such CI/CD products such as Gitlab / Bitbucket / CircleCI / Jenkins etc within the 
+constraints of each platform.
+
 ---
 
-## 🔥 Cost Optimization Strategies
-- ✅ **Use AWS Free Tier** for S3, Lambda, API Gateway, and DynamoDB where possible.
-- ✅ **Enable S3 Lifecycle Policies** to automatically delete unused images.
-- ✅ **Use On-Demand DynamoDB** to minimize unnecessary storage costs.
-- ✅ **Use CloudFront caching** to reduce S3 bandwidth usage.
-- ✅ **Monitor Lambda usage with CloudWatch** and optimize execution time to stay within free-tier limits.
-- ✅ **Leverage AWS Lambda Auto-Scaling** to handle predictable upload traffic spikes efficiently.
-- ✅ **Utilize short links** to reduce unnecessary API calls and storage costs.
-- ✅ **Enforce pull request authorization** to prevent unintended deployments and maintain high code quality.
-- ✅ **Integrate tfsec** into github workflow for Terraform security scanning to detect misconfigurations before deployment.
-- ✅ **Use Infracost** into github workflow to estimate and monitor AWS infrastructure costs before applying Terraform changes.
-- ✅ **Optimize CloudFront cache invalidation** by clearing only cache changed files using AWS Lambda.
+## Cost Optimization Strategies
+- **Use AWS Free Tier** for S3, Lambda, API Gateway, and DynamoDB where possible.
+- **Enable S3 Lifecycle Policies** to automatically delete unused images.
+- **Use On-Demand DynamoDB** to minimize unnecessary storage costs.
+- **Use CloudFront caching** to reduce S3 bandwidth usage.
+- **Monitor Lambda usage with CloudWatch** and optimize execution time to stay within free-tier limits.
+- **Leverage AWS Lambda Auto-Scaling** to handle predictable upload traffic spikes efficiently.
+- **Utilize short links** to reduce unnecessary API calls and storage costs.
+- **Enforce pull request authorization** to prevent unintended deployments and maintain high code quality.
+- **Integrate tfsec** into github workflow for Terraform security scanning to detect misconfigurations before deployment.
+- **Use Infracost** into github workflow to estimate and monitor AWS infrastructure costs before applying Terraform changes.
+- **Optimize CloudFront cache invalidation** by clearing only cache changed files using AWS Lambda.
 
-## 🔥 Cost Breakdown (Pay-As-You-Go Pricing)
+## Cost Breakdown (Pay-As-You-Go Pricing)
+
 Service	Cost Model
+
 - AWS Lambda	Pay per execution + memory usage
 - API Gateway	Pay per API request
 - S3 Storage	Pay per GB stored
 - DynamoDB	    Pay per read/write request
 - CloudFront	Pay per data transfer
   
-## 🔥 Estimated Costs
+## Estimated Costs
+<<<<<<< HEAD
 Usage	Estimated Monthly Cost
 - 10,000 API Requests	    ~$1.00
 - 1 GB S3 Storage	        ~$0.023
+=======
+
+Usage	Estimated Monthly Cost at current AWS cost API dollar pricing.
+
+- 10,000 API Requests	~$1.00
+- 1 GB S3 Storage	~$0.023
+>>>>>>> d7d21876c212007c41f28eac8c68e926c7c1427d
 - 100,000 Lambda Executions	~$0.20
 - DynamoDB (1GB Data)	    ~$0.25
 - Total estimated cost:     ~$1.50 to $5.00 per month, depending on usage!
 
 ---
+## Mobile Compatibility Enhancements
+
+- CORS & Preflight (OPTIONS)	Fixes API access issues in mobile browsers
+- WebP Format for Mobile	Loads images 40% faster on phones
+- CloudFront User-Agent Detection	Optimizes caching per device type
+- Auto Image Conversion in Lambda	Ensures best image quality without user effort
+- API Gateway with WebSockets (Future)	Enables real-time uploads for mobile apps
+
+## Route53 Considerations
+
+- Route 53 is NOT required if using AWS-provided default URLs.
+- Route 53 is required if we want a custom domain name like api.example.com or app.example.com.
+
+                 +---------------------------+
+                 |          Users            |
+                 |  (Web, Mobile App)        |
+                 |  (iOS, Android, Browser)  |
+                 +------------+--------------+
+                              |
+                 +------------+----------------+
+                 |   Amazon CloudFront (CDN)   |
+                 |  - Caches frontend & images |
+                 |  - Accelerates API requests |
+                 |  - Optimized for Mobile     |
+                 +------------+----------------+
+                              |
+              +---------------+-------------------+
+              |            API Gateway            |
+              |  - Exposes REST API for uploads   |
+              |  - Routes traffic to Lambda       |
+              |  - Supports CORS for Mobile       |
+              +---------------+-------------------+
+                              |
+                +-------------+-----------------+
+                |       AWS Lambda (Backend)    |
+                |  - Handles image uploads      |
+                |  - Resizes images             |
+                |  - Generates short URLs       |
+                |  - Detects Mobile User-Agent  |
+                +---+-+--------------+----------+
+                    | |              |
+                    | |              |
+      +-------------+-+---+     +----+--------------+
+      |   Amazon S3       |     |  Amazon DynamoDB  |
+      | (Image Storage)   |     | (Short URLs Data) |
+      | - Stores WebP/JPEG|     | - Maps short IDs  |
+      | - Mobile Optimized|     | - Fast lookups    |
+      +-------------------+     +-------------------+
 
 
