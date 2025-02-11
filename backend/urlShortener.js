@@ -13,7 +13,7 @@ async function createShortUrl(originalUrl) {
             originalUrl: { S: originalUrl },
         }
     }));
-    return `https://your-api.com/short/${shortId}`;
+    return `https://<your-api.com>/short/${shortId}`;
 }
 
 async function getOriginalUrl(shortId) {
