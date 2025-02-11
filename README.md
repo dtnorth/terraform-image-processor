@@ -4,7 +4,7 @@ This demo project is a **full-stack image management platform** deployed on AWS.
 
 It allows users to **upload, manage, change image resolution, share and access images** whilst allowing for security, cost management, minimal app footprint and handles spikes in the apps usage utilising:
 
-- **CloudFront CDN** UI presentation
+- **CloudFront CDN** UI presentation optimised for both Computer and Mobile users.
   
 - **AWS S3 Storage** All Image and Terraform state / Terraform lock file storage
   
