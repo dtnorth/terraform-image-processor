@@ -16,15 +16,14 @@ It allows users to **upload, manage, change image resolution, share and access i
 - **AWS Lambda**
   
 ```plaintext
-User uploads an image via an API call (POST / UI upload).
-API Gateway routes request to image_upload_lambda.
-image_upload_lambda: Saves the original image in S3.
-
+- User uploads an image via an API call (POST / UI upload).
+- API Gateway routes request to image_upload_lambda.
+- image_upload_lambda: Saves the original image in S3.
 - Calls image_resize_lambda to create multiple sizes to user resolution specification.
 - Calls url_shortener_lambda to generate a short link.
 
-User retrieves the image using a shortened URL (GET /short/{id}) via UI.
-CloudFront serves the images globally for fast performance.
+- User retrieves the image using a shortened URL (GET /short/{id}) via UI.
+- CloudFront serves the images globally for fast performance.
 ```
 - **NodeJS**
   
