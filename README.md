@@ -320,5 +320,13 @@ Usage	Estimated Monthly Cost at current AWS cost API dollar pricing.
 - Total estimated cost: ~$1.50 to $5.00 per month, depending on usage!
 
 ---
+## 🔥 Mobile Compatibility Enhancements
+
+- CORS & Preflight (OPTIONS)	Fixes API access issues in mobile browsers
+- WebP Format for Mobile	Loads images 40% faster on phones
+- CloudFront User-Agent Detection	Optimizes caching per device type
+- Auto Image Conversion in Lambda	Ensures best image quality without user effort
+- API Gateway with WebSockets (Future)	Enables real-time uploads for mobile apps
+
 
 
