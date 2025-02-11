@@ -331,5 +331,40 @@ Usage	Estimated Monthly Cost at current AWS cost API dollar pricing.
 - Route 53 is NOT required if using AWS-provided default URLs.
 - Route 53 is required if we want a custom domain name like api.example.com or app.example.com.
 
+                 +---------------------------+
+                 |          Users            |
+                 |  (Web, Mobile App)        |
+                 |  (iOS, Android, Browser)  |
+                 +------------+--------------+
+                              |
+                 +------------+----------------+
+                 |   Amazon CloudFront (CDN)   |
+                 |  - Caches frontend & images |
+                 |  - Accelerates API requests |
+                 |  - Optimized for Mobile     |
+                 +------------+----------------+
+                              |
+              +---------------+-------------------+
+              |            API Gateway            |
+              |  - Exposes REST API for uploads   |
+              |  - Routes traffic to Lambda       |
+              |  - Supports CORS for Mobile       |
+              +---------------+-------------------+
+                              |
+                +-------------+-----------------+
+                |       AWS Lambda (Backend)    |
+                |  - Handles image uploads      |
+                |  - Resizes images             |
+                |  - Generates short URLs       |
+                |  - Detects Mobile User-Agent  |
+                +-+-+--------------+------------+
+                  | |              |
+                  | |              |
+    +-------------+-+---+     +----+--------------+
+    |   Amazon S3       |     |  Amazon DynamoDB  |
+    | (Image Storage)   |     | (Short URLs Data) |
+    | - Stores WebP/JPEG|     | - Maps short IDs  |
+    | - Mobile Optimized|     | - Fast lookups    |
+    +-------------------+     +-------------------+
 
 
