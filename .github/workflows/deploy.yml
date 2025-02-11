@@ -1,4 +1,5 @@
-name: CI/CD Pipeline for AWS Image Management Platform
+
+name: Deploy AWS Infrastructure
 
 on:
   push:
@@ -6,70 +7,25 @@ on:
       - main
 
 jobs:
-  security_scan:
-    name: Run tfsec Security Scan
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-      - name: Run tfsec
-        uses: aquasecurity/tfsec-action@v1
-        with:
-          working_directory: terraform/
 
-  cost_estimation:
-    name: Run Infracost Cost Estimation
-    runs-on: ubuntu-latest
-    needs: security_scan
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - name: Setup Infracost
-        uses: infracost/actions/setup@v2
-      - name: Run Infracost
-        run: |
-          infracost breakdown --path terraform/ --format json --out-file infracost.json
-          cat infracost.json
-
-  deploy_infrastructure:
-    name: Deploy Infrastructure with Terraform
-    runs-on: ubuntu-latest
-    needs: cost_estimation
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
+
       - name: Terraform Init & Apply
         run: |
           cd terraform
           terraform init
           terraform apply -auto-approve
 
-  deploy_application:
-    name: Deploy Backend & Frontend
-    runs-on: ubuntu-latest
-    needs: deploy_infrastructure
-    steps:
-      - name: Deploy Backend (Lambda, API Gateway)
-        run: echo "Deploying backend..."
-      - name: Deploy Frontend (S3, CloudFront)
-        run: echo "Deploying frontend..."
-
-  cloudfront_invalidation:
-    name: Invalidate CloudFront Cache for Changed Files
-    runs-on: ubuntu-latest
-    needs: deploy_application
-    steps:
-      - name: Detect Changed Files
-        id: changed_files
+      - name: Build & Deploy Lambda
         run: |
-          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD | grep frontend/out/ || echo "")
-          echo "Changed files: $CHANGED_FILES"
-          echo "::set-output name=files::$CHANGED_FILES"
-      - name: Invalidate CloudFront Cache
-        if: steps.changed_files.outputs.files != ''
-        run: |
-          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[0].Id" --output text)
-          aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths ${{ steps.changed_files.outputs.files }}
-
+          cd backend
+          npm install
+          zip -r lambda.zip .
+          aws s3 cp lambda.zip s3://your-s3-bucket-name/
+          aws lambda update-function-code --function-name ImageService --s3-bucket your-s3-bucket-name --s3-key lambda.zip

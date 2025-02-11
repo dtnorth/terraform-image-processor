@@ -1,56 +1,42 @@
+
 const express = require('express');
 const multer = require('multer');
-const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
-const { DynamoDBClient, PutItemCommand, GetItemCommand } = require('@aws-sdk/client-dynamodb');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const sharp = require('sharp');
 const shortid = require('shortid');
 const serverless = require('serverless-http');
-const { generateResizedImages } = require('./imageProcessor');
-const { createShortUrl, getOriginalUrl } = require('./urlShortener');
 
 const app = express();
-const s3 = new S3Client({ region: process.env.AWS_REGION });
 const upload = multer({ storage: multer.memoryStorage() });
 
-const BUCKET_NAME = process.env.S3_BUCKET;
+const s3 = new S3Client({ region: process.env.AWS_REGION });
+const dynamoDB = new DynamoDBClient({ region: process.env.AWS_REGION });
 
-// 📌 Image Upload API
 app.post('/upload', upload.single('image'), async (req, res) => {
     const file = req.file;
     const fileName = `uploads/${Date.now()}-${file.originalname}`;
-
-    const params = {
-        Bucket: BUCKET_NAME,
+    await s3.send(new PutObjectCommand({
+        Bucket: process.env.S3_BUCKET,
         Key: fileName,
         Body: file.buffer,
         ContentType: file.mimetype,
-    };
+    }));
 
-    try {
-        await s3.send(new PutObjectCommand(params));
-        const resizedUrls = await generateResizedImages(s3, BUCKET_NAME, file.buffer, fileName);
-        const shortUrl = await createShortUrl(fileName);
-        
-        res.json({
-            message: 'Upload successful',
-            originalUrl: `https://${BUCKET_NAME}.s3.amazonaws.com/${fileName}`,
-            resizedUrls,
-            shortUrl
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+    const shortId = shortid.generate();
+    await dynamoDB.send(new PutItemCommand({
+        TableName: process.env.TABLE_NAME,
+        Item: {
+            shortId: { S: shortId },
+            originalUrl: { S: fileName },
+        }
+    }));
 
-// 📌 URL Shortener API
-app.get('/short/:id', async (req, res) => {
-    try {
-        const originalUrl = await getOriginalUrl(req.params.id);
-        res.redirect(originalUrl);
-    } catch (error) {
-        res.status(404).json({ error: 'Short URL not found' });
-    }
+    res.json({
+        message: 'Upload successful',
+        fileUrl: `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${fileName}`,
+        shortUrl: `https://your-api.com/short/${shortId}`
+    });
 });
 
 module.exports.handler = serverless(app);
-
