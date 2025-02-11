@@ -357,14 +357,14 @@ Usage	Estimated Monthly Cost at current AWS cost API dollar pricing.
                 |  - Resizes images             |
                 |  - Generates short URLs       |
                 |  - Detects Mobile User-Agent  |
-                +-+-+--------------+------------+
-                  | |              |
-                  | |              |
-    +-------------+-+---+     +----+--------------+
-    |   Amazon S3       |     |  Amazon DynamoDB  |
-    | (Image Storage)   |     | (Short URLs Data) |
-    | - Stores WebP/JPEG|     | - Maps short IDs  |
-    | - Mobile Optimized|     | - Fast lookups    |
-    +-------------------+     +-------------------+
+                +---+-+--------------+----------+
+                    | |              |
+                    | |              |
+      +-------------+-+---+     +----+--------------+
+      |   Amazon S3       |     |  Amazon DynamoDB  |
+      | (Image Storage)   |     | (Short URLs Data) |
+      | - Stores WebP/JPEG|     | - Maps short IDs  |
+      | - Mobile Optimized|     | - Fast lookups    |
+      +-------------------+     +-------------------+
 
 
