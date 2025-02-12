@@ -88,7 +88,6 @@ For simplicity and cost reduction no VPC, EC2, ECS OR EKS or traditional cloud s
 The architecture is optimized for **cost-effectiveness**, **performance optimisation utilizing AWS's free-tier offerings and minimizing unnecessary expense.
 
 ---
-
 ## Features
 
 - **Frontend:** Next.js hosted on AWS S3 & served via CloudFront CDN for low-cost, high-speed delivery  
