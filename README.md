@@ -1,4 +1,4 @@
-# 📸 AWS Image Management Platform
+# AWS Image Management Platform
 
 This demo project is a **full-stack image management platform** deployable on AWS. 
 
@@ -69,7 +69,8 @@ Result: The system scales without downtime or manual intervention!
 ```
 - **Cloudwatch**
 ```plaintext
-  🚀 Scenario: Monitoring a High-Traffic Image Upload
+  ##Scenario: Monitoring a High-Traffic Image Upload##
+
 - User uploads an image via API Gateway (POST /upload).
 - API Gateway logs the request in CloudWatch.
 - AWS Lambda runs the function, and CloudWatch records execution time, errors, and memory usage.
@@ -246,12 +247,12 @@ jobs:
 
 ## Deployment Steps
 
-### **1️⃣ Set Up AWS Credentials in GitHub Actions**
+### **1Set Up AWS Credentials in GitHub Actions**
 - Go to **GitHub > Settings > Secrets** and add:
   - `AWS_ACCESS_KEY_ID`
   - `AWS_SECRET_ACCESS_KEY`
 
-### **3️⃣ Submit a Pull Request for Code Changes**
+### **Submit a Pull Request for Code Changes**
 - Push your changes to a **feature branch**:
 ```sh
 git add .
@@ -260,14 +261,14 @@ git push origin <feature-branch>
 ```
 - Open a pull request in GitHub and request a peer review before merging.
 
-### **4️⃣ Merge Approved Pull Request & Deploy**
+### **Merge Approved Pull Request & Deploy**
 Once the pull request is approved and merged to `main`, GitHub Actions will **automatically deploy** the backend & frontend:
 ```sh
 git push origin main
 ```
 - After deployment, the **AWS Lambda function will detect changed files and clear only those files from CloudFront cache**.
 
-### **5️⃣ Access Your Deployed App**
+### **Access Your Deployed App**
 Run:
 ```sh
 terraform output
@@ -298,7 +299,7 @@ constraints of each platform.
 
 ## Cost Breakdown (Pay-As-You-Go Pricing)
 
-Service	Cost Model
+##Service	Cost Model##
 
 - AWS Lambda	Pay per execution + memory usage
 - API Gateway	Pay per API request
@@ -307,7 +308,7 @@ Service	Cost Model
 - CloudFront	Pay per data transfer
   
 ## Estimated Costs
-<<<<<<< HEAD
+
 Usage	Estimated Monthly Cost
 - 10,000 API Requests	    ~$1.00
 - 1 GB S3 Storage	        ~$0.023
@@ -317,7 +318,6 @@ Usage	Estimated Monthly Cost at current AWS cost API dollar pricing.
 
 - 10,000 API Requests	~$1.00
 - 1 GB S3 Storage	~$0.023
->>>>>>> d7d21876c212007c41f28eac8c68e926c7c1427d
 - 100,000 Lambda Executions	~$0.20
 - DynamoDB (1GB Data)	    ~$0.25
 - Total estimated cost:     ~$1.50 to $5.00 per month, depending on usage!
