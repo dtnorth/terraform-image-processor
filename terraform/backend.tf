@@ -1,4 +1,4 @@
-# 🚀 IAM Role for Lambda Execution (with X-Ray Permissions)
+# IAM Role for Lambda Execution (with X-Ray Permissions)
 resource "aws_iam_role" "lambda_role" {
   name = "lambda-execution-role"
 
@@ -12,14 +12,14 @@ resource "aws_iam_role" "lambda_role" {
   })
 }
 
-# 🚀 Attach X-Ray Permissions to Lambda Role
+# Attach X-Ray Permissions to Lambda Role
 resource "aws_iam_policy_attachment" "lambda_xray" {
   name       = "lambda-xray-attachment"
   roles      = [aws_iam_role.lambda_role.name]
   policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
 }
 
-# 🚀 Lambda Function with X-Ray Enabled
+# Lambda Function with X-Ray Enabled
 resource "aws_lambda_function" "image_lambda" {
   function_name = var.lambda_function_name
   role          = aws_iam_role.lambda_role.arn
@@ -28,7 +28,7 @@ resource "aws_lambda_function" "image_lambda" {
   filename      = "backend/lambda.zip"
 
   tracing_config {
-    mode = "Active"  # ✅ Enables X-Ray tracing
+    mode = "Active"  # Enables X-Ray tracing
   }
 
   environment {
