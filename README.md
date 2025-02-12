@@ -30,9 +30,9 @@ It allows users to **upload, manage, change image resolution, share and access i
 - User uploads an image via API Gateway (POST /upload).
 - API Gateway routes request to AWS Lambda, which is running Node.js (Express.js).
 - Node.js (Express.js) in AWS Lambda:
-- Uses NodeJS Multer to process file uploads.
+- Uses NodeJS ##Multer## to process file uploads.
 - Saves original image in Amazon S3.
-- Calls NodeJSsharp to create resized images.
+- Calls NodeJS ##sharp## to create resized images.
 - Calls AWS DynamoDB to store short URLs.
 - Node.js sends JSON response back to API Gateway with:
 - Original image URL
@@ -123,12 +123,12 @@ The architecture is optimized for **cost-effectiveness**, **performance optimisa
  ┃ ┣ 📂 pages              
  ┃ ┣ 📜 package.json       # Configure React and Node dependencies. 
  ┃ ┣ 📜 index.js           # API Endpoints
- ┣ 📂 terraform            # AWS Infrastructure (S3, Lambda, CloudFront, API Gateway, DynamoDB)
- ┃ ┣ 📜 backend.tf         # Runs the backend logic (image processing, resizing, URL shortening),
+ ┣ 📂 terraform            # AWS Infrastructure (S3, Lambda, CloudFront, API Gateway, DynamoDB, IAM etc)
+ ┃ ┣ 📜 backend.tf         # Runs the backend logic (image processing, resizing, URL shortening).  Generates the index.html served page.
 - Exposes the Lambda function as a RESTful API
 - Stores shortened URLs in conjuction with DynamoDB for image sharing
 - Grants permissions for Lambda to access S3, DynamoDB, and API Gateway
-  ┃ ┣ 📜 frontend.tf        # S3 BucketStores the Next.js static files (frontend) cloudFront Distribution	Serves the website
+  ┃ ┣ 📜 frontend.tf        # S3 Bucket Stores the Next.js static files (frontend) cloudFront Distribution	Serves the website
 = securely & globally Bucket Policy	Makes the S3 content publicly accessible via CloudFront
  ┃ ┣ 📜 cloudfront.tf      # CloudFront for S3	Serves the frontend (Next.js, Express.js, index.js and associated CSS files, prettyfying the UI)
  ┃ ┣ 📜 lambda.tf          # Deploy Github built Lambdas as zip files to S3 storage.
@@ -247,22 +247,24 @@ jobs:
 
 ## Deployment Steps
 
-### **1Set Up AWS Credentials in GitHub Actions**
+### **Set Up AWS Credentials in GitHub Actions**
 - Go to **GitHub > Settings > Secrets** and add:
   - `AWS_ACCESS_KEY_ID`
   - `AWS_SECRET_ACCESS_KEY`
+ 
+### **Create a development branch referencing change ticket number in branch name**##
 
 ### **Submit a Pull Request for Code Changes**
 - Push your changes to a **feature branch**:
 ```sh
 git add .
-git commit -m "🚀 New feature implementation"
+git commit -m "New feature implementation"
 git push origin <feature-branch>
 ```
-- Open a pull request in GitHub and request a peer review before merging.
+- Open a pull request in GitHub request peer review before merging.
 
 ### **Merge Approved Pull Request & Deploy**
-Once the pull request is approved and merged to `main`, GitHub Actions will **automatically deploy** the backend & frontend:
+Once the pull request is approved and merged to `main/master`, GitHub Actions will **automatically deploy** the backend & frontend:
 ```sh
 git push origin main
 ```
@@ -280,7 +282,7 @@ Backend API: https://<api-id>.execute-api.eu-north-1.amazonaws.com/prod
 ```
 
 The pipeline can be re-written for other such CI/CD products such as Gitlab / Bitbucket / CircleCI / Jenkins etc within the 
-constraints of each platform.
+constraints and pipeline amendments unique to each VCS platform.
 
 ---
 
@@ -304,29 +306,29 @@ constraints of each platform.
 - AWS Lambda	Pay per execution + memory usage
 - API Gateway	Pay per API request
 - S3 Storage	Pay per GB stored
-- DynamoDB	    Pay per read/write request
+- DynamoDB	  Pay per read/write request
 - CloudFront	Pay per data transfer
   
 ## Estimated Costs
 
 Usage	Estimated Monthly Cost
-- 10,000 API Requests	    ~$1.00
-- 1 GB S3 Storage	        ~$0.023
+- 10,000 API Requests	      ~$1.00
+- 1 GB S3 Storage	          ~$0.023
 =======
 
 Usage	Estimated Monthly Cost at current AWS cost API dollar pricing.
 
-- 10,000 API Requests	~$1.00
-- 1 GB S3 Storage	~$0.023
+- 10,000 API Requests	      ~$1.00
+- 1 GB S3 Storage         	~$0.023
 - 100,000 Lambda Executions	~$0.20
-- DynamoDB (1GB Data)	    ~$0.25
+- DynamoDB (1GB Data)	      ~$0.25
 - Total estimated cost:     ~$1.50 to $5.00 per month, depending on usage!
 
 ---
 ## Mobile Compatibility Enhancements
 
 - CORS & Preflight (OPTIONS)	Fixes API access issues in mobile browsers
-- WebP Format for Mobile	Loads images 40% faster on phones
+- WebP Format for Mobile loads images 40% faster on mobile platfoems.
 - CloudFront User-Agent Detection	Optimizes caching per device type
 - Auto Image Conversion in Lambda	Ensures best image quality without user effort
 - API Gateway with WebSockets (Future)	Enables real-time uploads for mobile apps
