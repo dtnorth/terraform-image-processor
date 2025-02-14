@@ -346,14 +346,14 @@ constraints and pipeline amendments unique to each VCS platform.
       | - Mobile Optimized|     | - Fast lookups    |
       +-------------------+     +-------------------+
 
-### TFsec output
+### **TFsec output**
 
 ![image](https://github.com/user-attachments/assets/dd4a8488-542c-42db-aeae-c7fc4546e119)
 
 ```plaintext
-### Infracost Output
+### **Infracost Output**
 
-derek@DEREK-VIVOBOOK:~/terraform-image-demo$ infracost breakdown --path .
+derek@DEREK-VIVOBOOK:~/terraform-image-demo$ **infracost breakdown --path .**
 INFO Autodetected 1 Terraform project across 1 root module
 INFO Found Terraform project terraform at directory terraform
 
@@ -474,3 +474,10 @@ Module path: terraform
 ┃ terraform                                          ┃            £6 ┃           - ┃         £6 ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━┻━━━━━━━━━━━━┛
 ```
+
+### **Illegal Content**
+
+Considertation must be taken into account for illegal content uoploads therefore inclusion of utilisation of AI under https://aws.amazon.com/rekognition/content-moderation/
+or using LLM AI at the Lambda level.    
+
+This could be pulled and integrated into the Lambda via https://github.com/awslabs/aws-ai-solution-kit
