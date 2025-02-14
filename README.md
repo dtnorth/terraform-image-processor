@@ -296,31 +296,6 @@ constraints and pipeline amendments unique to each VCS platform.
 - **Use Infracost** into github workflow to estimate and monitor AWS infrastructure costs before applying Terraform changes.
 - **Optimize CloudFront cache invalidation** by clearing only cache changed files using AWS Lambda.
 
-## Cost Breakdown (Pay-As-You-Go Pricing)
-
-##Service	Cost Model##
-
-- AWS Lambda	Pay per execution + memory usage
-- API Gateway	Pay per API request
-- S3 Storage	Pay per GB stored
-- DynamoDB	  Pay per read/write request
-- CloudFront	Pay per data transfer
-  
-## Estimated Costs
-
-Usage	Estimated Monthly Cost
-- 10,000 API Requests	      ~$1.00
-- 1 GB S3 Storage	          ~$0.023
-=======
-
-Usage	Estimated Monthly Cost at current AWS cost API dollar pricing.
-
-- 10,000 API Requests	      ~$1.00
-- 1 GB S3 Storage         	~$0.023
-- 100,000 Lambda Executions	~$0.20
-- DynamoDB (1GB Data)	      ~$0.25
-- Total estimated cost:     ~$1.50 to $5.00 per month, depending on usage!
-
 ---
 ## Mobile Compatibility Enhancements
 
@@ -375,6 +350,7 @@ Usage	Estimated Monthly Cost at current AWS cost API dollar pricing.
 
 ![image](https://github.com/user-attachments/assets/dd4a8488-542c-42db-aeae-c7fc4546e119)
 
+```plaintext
 ### Infracost Output
 
 derek@DEREK-VIVOBOOK:~/terraform-image-demo$ infracost breakdown --path .
@@ -497,4 +473,4 @@ Module path: terraform
 ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━╋━━━━━━━━━━━━┫
 ┃ terraform                                          ┃            £6 ┃           - ┃         £6 ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━┻━━━━━━━━━━━━┛
-
+```
