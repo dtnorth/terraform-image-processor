@@ -53,7 +53,7 @@ It allows users to **upload, manage, change image resolution, share and access i
 ```
 - **AWS Serverless Scaling**
 ```plaintext
-  Scenario: A Sudden Surge in Image Uploads
+  ##Scenario: A Sudden Surge in Image Uploads
 - A user uploads an image, triggering POST /upload.
 - API Gateway forwards the request to AWS Lambda.
 - AWS Lambda runs the function and processes the image.
@@ -85,7 +85,7 @@ workflow consideration of the **github actions** pull request review, ##tfsec st
 
 For simplicity and cost reduction no VPC, EC2, ECS OR EKS or traditional cloud structures are required.
 
-The architecture is optimized for **cost-effectiveness**, **performance optimisation utilizing AWS's free-tier offerings and minimizing unnecessary expense.
+The architecture is optimized for **cost-effectiveness**, **performance optimisation## utilizing AWS's free-tier offerings and minimizing unnecessary expense.
 
 ---
 ## Features
@@ -108,7 +108,6 @@ The architecture is optimized for **cost-effectiveness**, **performance optimisa
 - **Route53** costs would apply if not using AWS generated URLs. If using Custom API Domains, Custom Image Sharing Domain names or Custom Frontend Domain names.
 
 ---
-
 ## Project Structure
 ```plaintext
 📦 image-management-platform
@@ -141,7 +140,6 @@ The architecture is optimized for **cost-effectiveness**, **performance optimisa
  ┗ 📜 README.md
 
 ```
-
 ## Infrastructure Overview
 
 ### **Frontend (Next.js + S3 + CloudFront)**
@@ -373,4 +371,130 @@ Usage	Estimated Monthly Cost at current AWS cost API dollar pricing.
       | - Mobile Optimized|     | - Fast lookups    |
       +-------------------+     +-------------------+
 
+### TFsec output
+
+![image](https://github.com/user-attachments/assets/dd4a8488-542c-42db-aeae-c7fc4546e119)
+
+### Infracost Output
+
+derek@DEREK-VIVOBOOK:~/terraform-image-demo$ infracost breakdown --path .
+INFO Autodetected 1 Terraform project across 1 root module
+INFO Found Terraform project terraform at directory terraform
+
+Project: terraform
+Module path: terraform
+
+ Name                                                      Monthly Qty  Unit                  Monthly Cost (GBP)
+
+ aws_wafv2_web_acl.cloudfront_waf
+ ├─ Web ACL usage                                                    1  months                             £4.01
+ └─ Requests                                       Monthly cost depends on usage: £0.48 per 1M requests
+
+ aws_kms_key.dynamodb_kms
+ ├─ Customer master key                                              1  months                             £0.80
+ ├─ Requests                                       Monthly cost depends on usage: £0.024057 per 10k requests
+ ├─ ECC GenerateDataKeyPair requests               Monthly cost depends on usage: £0.08019 per 10k requests
+ └─ RSA GenerateDataKeyPair requests               Monthly cost depends on usage: £0.08019 per 10k requests
+
+ aws_kms_key.frontend_kms_key
+ ├─ Customer master key                                              1  months                             £0.80
+ ├─ Requests                                       Monthly cost depends on usage: £0.024057 per 10k requests
+ ├─ ECC GenerateDataKeyPair requests               Monthly cost depends on usage: £0.08019 per 10k requests
+ └─ RSA GenerateDataKeyPair requests               Monthly cost depends on usage: £0.08019 per 10k requests
+
+ aws_kms_key.s3_key
+ ├─ Customer master key                                              1  months                             £0.80
+ ├─ Requests                                       Monthly cost depends on usage: £0.024057 per 10k requests
+ ├─ ECC GenerateDataKeyPair requests               Monthly cost depends on usage: £0.08019 per 10k requests
+ └─ RSA GenerateDataKeyPair requests               Monthly cost depends on usage: £0.08019 per 10k requests
+
+ aws_api_gateway_rest_api.image_api
+ └─ Requests (first 333M)                          Monthly cost depends on usage: £2.81 per 1M requests
+
+ aws_cloudfront_distribution.cdn
+ ├─ Real-time log requests                         Monthly cost depends on usage: £0.008 per 1M lines
+ ├─ Invalidation requests (first 1k)               Monthly cost depends on usage: £0.00 per paths
+ └─ US, Mexico, Canada
+    ├─ Data transfer out to internet (first 10TB)  Monthly cost depends on usage: £0.0681615 per GB
+    ├─ Data transfer out to origin                 Monthly cost depends on usage: £0.016038 per GB
+    ├─ HTTP requests                               Monthly cost depends on usage: £0.006014 per 10k requests
+    └─ HTTPS requests                              Monthly cost depends on usage: £0.008019 per 10k requests
+
+ aws_cloudfront_distribution.imager
+ ├─ Real-time log requests                         Monthly cost depends on usage: £0.008 per 1M lines
+ ├─ Invalidation requests (first 1k)               Monthly cost depends on usage: £0.00 per paths
+ └─ US, Mexico, Canada
+    ├─ Data transfer out to internet (first 10TB)  Monthly cost depends on usage: £0.0681615 per GB
+    ├─ Data transfer out to origin                 Monthly cost depends on usage: £0.016038 per GB
+    ├─ HTTP requests                               Monthly cost depends on usage: £0.006014 per 10k requests
+    └─ HTTPS requests                              Monthly cost depends on usage: £0.008019 per 10k requests
+
+ aws_dynamodb_table.urls
+ ├─ Write request unit (WRU)                       Monthly cost depends on usage: £0.0000005012 per WRUs
+ ├─ Read request unit (RRU)                        Monthly cost depends on usage: £0.0000001002 per RRUs
+ ├─ Data storage                                   Monthly cost depends on usage: £0.20 per GB
+ ├─ Point-In-Time Recovery (PITR) backup storage   Monthly cost depends on usage: £0.16 per GB
+ ├─ On-demand backup storage                       Monthly cost depends on usage: £0.08019 per GB
+ ├─ Table data restored                            Monthly cost depends on usage: £0.12 per GB
+ └─ Streams read request unit (sRRU)               Monthly cost depends on usage: £0.0000001604 per sRRUs
+
+ aws_lambda_function.image_lambda
+ ├─ Requests                                       Monthly cost depends on usage: £0.16 per 1M requests
+ ├─ Ephemeral storage                              Monthly cost depends on usage: £0.0000000248 per GB-seconds
+ └─ Duration (first 6B)                            Monthly cost depends on usage: £0.000013365 per GB-seconds
+
+ aws_s3_bucket.cloudfront_logs
+ └─ Standard
+    ├─ Storage                                     Monthly cost depends on usage: £0.0184437 per GB
+    ├─ PUT, COPY, POST, LIST requests              Monthly cost depends on usage: £0.0040095 per 1k requests
+    ├─ GET, SELECT, and all other requests         Monthly cost depends on usage: £0.0003208 per 1k requests
+    ├─ Select data scanned                         Monthly cost depends on usage: £0.0016038 per GB
+    └─ Select data returned                        Monthly cost depends on usage: £0.00056133 per GB
+
+ aws_s3_bucket.frontend
+ └─ Standard
+    ├─ Storage                                     Monthly cost depends on usage: £0.0184437 per GB
+    ├─ PUT, COPY, POST, LIST requests              Monthly cost depends on usage: £0.0040095 per 1k requests
+    ├─ GET, SELECT, and all other requests         Monthly cost depends on usage: £0.0003208 per 1k requests
+    ├─ Select data scanned                         Monthly cost depends on usage: £0.0016038 per GB
+    └─ Select data returned                        Monthly cost depends on usage: £0.00056133 per GB
+
+ aws_s3_bucket.frontend_s3
+ └─ Standard
+    ├─ Storage                                     Monthly cost depends on usage: £0.0184437 per GB
+    ├─ PUT, COPY, POST, LIST requests              Monthly cost depends on usage: £0.0040095 per 1k requests
+    ├─ GET, SELECT, and all other requests         Monthly cost depends on usage: £0.0003208 per 1k requests
+    ├─ Select data scanned                         Monthly cost depends on usage: £0.0016038 per GB
+    └─ Select data returned                        Monthly cost depends on usage: £0.00056133 per GB
+
+ aws_s3_bucket.images
+ └─ Standard
+    ├─ Storage                                     Monthly cost depends on usage: £0.0184437 per GB
+    ├─ PUT, COPY, POST, LIST requests              Monthly cost depends on usage: £0.0040095 per 1k requests
+    ├─ GET, SELECT, and all other requests         Monthly cost depends on usage: £0.0003208 per 1k requests
+    ├─ Select data scanned                         Monthly cost depends on usage: £0.0016038 per GB
+    └─ Select data returned                        Monthly cost depends on usage: £0.00056133 per GB
+
+ aws_s3_bucket.logs
+ └─ Standard
+    ├─ Storage                                     Monthly cost depends on usage: £0.0184437 per GB
+    ├─ PUT, COPY, POST, LIST requests              Monthly cost depends on usage: £0.0040095 per 1k requests
+    ├─ GET, SELECT, and all other requests         Monthly cost depends on usage: £0.0003208 per 1k requests
+    ├─ Select data scanned                         Monthly cost depends on usage: £0.0016038 per GB
+    └─ Select data returned                        Monthly cost depends on usage: £0.00056133 per GB
+
+ OVERALL TOTAL (GBP)                                                                                      £6.42
+
+*Usage costs can be estimated by updating Infracost Cloud settings, see docs for other options.
+
+──────────────────────────────────
+45 cloud resources were detected:
+∙ 14 were estimated
+∙ 31 were free
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
+┃ Project                                            ┃ Baseline cost ┃ Usage cost* ┃ Total cost ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━╋━━━━━━━━━━━━┫
+┃ terraform                                          ┃            £6 ┃           - ┃         £6 ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━┻━━━━━━━━━━━━┛
 
