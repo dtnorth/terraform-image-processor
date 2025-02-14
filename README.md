@@ -1,6 +1,6 @@
 # AWS Image Management Platform
 
-This demo project is a **full-stack image management platform** deployable on AWS. 
+This demo project is a **full-stack image management platform** deployable on AWS in support of my application.
 
 It allows users to **upload, manage, change image resolution, share and access images** whilst allowing for security, cost management, minimal app footprint and handles spikes in the apps usage utilising:
 
